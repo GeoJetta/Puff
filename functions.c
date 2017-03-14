@@ -1,8 +1,10 @@
-#define CLOSED 1 //Claw position constants
-#define OPEN 0 //^^
-#define ENCODERMODE 1 //Drive error source modes
-#define GYROMODE 2 //^^
-#define LINEMODE 3 //^^
+//Claw position constants
+#define CLOSED 1 
+#define OPEN 0
+//Drive error source modes
+#define ENCODERMODE 1 
+#define GYROMODE 2
+#define LINEMODE 3
 
 //TrueSpeed array - remap joystick values to linear acceleration
 const int tsArray[128] = {
@@ -21,15 +23,18 @@ const int tsArray[128] = {
 		88, 89, 89, 90, 90, 90, 90, 90
 };
 
-int lClawTarget = SensorValue[LeftClawPot]; //Set claw target to the current value when starting
-int rClawTarget = SensorValue[RightClawPot]; //^^
+//Set claw target to the current value when starting
+int lClawTarget = SensorValue[LeftClawPot]; 
+int rClawTarget = SensorValue[RightClawPot];
 int liftTarget = (SensorValue[LeftMiddleLiftEnc] + SensorValue[RightMiddleLiftEnc])/2; //Set lift target to current sensor value
-int lDrivePTarget = SensorValue[LeftBackDriveEnc]; //Set drive target to current sensor value
-int rDrivePTarget = SensorValue[RightBackDriveEnc]; //^^
+//Set drive target to current sensor value
+int lDrivePTarget = SensorValue[LeftBackDriveEnc]; 
+int rDrivePTarget = SensorValue[RightBackDriveEnc]; 
 int driveAnglePTarget = SensorValue[gyro]; //Set gyro target to current value
 
-int lLineErr = 65; //Power to drive backwards when lining up on tape
-int rLineErr = 65; //^^
+//Power to drive backwards when lining up on tape
+int lLineErr = 65; 
+int rLineErr = 65; 
 int driveFeedbackSource = ENCODERMODE; //Start out with encoders as error source for drive
 
 //Don't do position holding during driver mode
@@ -87,8 +92,9 @@ void claw( int pwr )
 void drive( int lpwr, int rpwr = lpwr )
 {
 
-	clipValue(lpwr, 90); //Cap values at 90 - above this motor power increase is negligible
-	clipValue(rpwr, 90); //^^
+	//Cap values at 90 - above this motor power increase is negligible
+	clipValue(lpwr, 90); 
+	clipValue(rpwr, 90); 
 
 	if( abs(lpwr) > 15 ) //Set deadband - if outside of range
 	{
@@ -172,8 +178,9 @@ task drivePControl()
 			}
 			else //Otherwise, use normal values
 			{
-				motor[LeftBottomDrive] = motor[LeftTopDrive] = trueSpeed(lErr); //Set drive power to the error
-				motor[RightBottomDrive] = motor[RightTopDrive] = trueSpeed(rErr); //^^
+				//Set drive power to the error
+				motor[LeftBottomDrive] = motor[LeftTopDrive] = trueSpeed(lErr); 
+				motor[RightBottomDrive] = motor[RightTopDrive] = trueSpeed(rErr); 
 			}
 
 			if( abs( lErr ) < 20 && abs( rErr ) < 20 ) //If within 20 (less than the motors can move) of target, set as completed
@@ -201,8 +208,6 @@ void setDriveTarget( int lTarget = SensorValue[LeftBackDriveEnc], int rTarget = 
 
 void moveDriveTarget( int lTarget, int rTarget = lTarget ) //add or subtract from the current target (relative movement)
 {
-
-	//setDriveTarget(); //Set targets to current encoder values
 
 	lDrivePTarget += lTarget;
 	rDrivePTarget += rTarget;
@@ -337,9 +342,9 @@ task clawHold()
 			lClawErr = (lClawTarget - SensorValue[LeftClawPot])/3; //Error = how far away from target
 			rClawErr = (rClawTarget - SensorValue[RightClawPot])/3;
 
-
-			motor[LeftClaw] = -clipValue( lClawErr ); //Set motor to error value
-			motor[RightClaw] = -clipValue( rClawErr ); //^^
+			//Set motor to error value
+			motor[LeftClaw] = -clipValue( lClawErr ); 
+			motor[RightClaw] = -clipValue( rClawErr ); 
 
 			wait1Msec( 15 ); //Allow other tasks to run
 
@@ -515,8 +520,9 @@ void lineUp( int threshold = 2000, int resetTo = 0 )
 
 	wait1Msec( 300 ); //Allow to settle
 
-	rLineErr = 0; //Make sure stopped
-	lLineErr = 0; //^^
+	//Make sure stopped
+	rLineErr = 0; 
+	lLineErr = 0; 
 
 	wait1Msec(500);
 
